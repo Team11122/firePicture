@@ -19,6 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Api(value = "首页接口层次", tags = "首页接口")
 @Controller
@@ -38,6 +43,7 @@ public class MainController {
     @RequestMapping("/rotation")
     @ApiOperation("跳转到首页")
     public String rotation(Model model, HttpSession httpSession){
+
         //清除页数
         if(httpSession.getAttribute("PicturePage")!=null) {httpSession.removeAttribute("PicturePage");}
         PicturePage picturePage = new PicturePage();
@@ -128,7 +134,100 @@ public class MainController {
         model.addAttribute("pictureRotation5",pictureRotation5);
         return "main";
     }
+    @RequestMapping("/rotations")
+    @ApiOperation("跳转到首页")
+    public String rotations(Model model, HttpSession httpSession){
 
+        //清除页数
+        if(httpSession.getAttribute("PicturePage")!=null) {httpSession.removeAttribute("PicturePage");}
+        PicturePage picturePage = new PicturePage();
+        picturePage.setBigSort("轮播图");
+        List<Picture> pictureRotation = pictureService.findPicture(picturePage);
+        List<Picture> pictureRotation1 = new ArrayList<Picture>();
+        pictureRotation1.add(pictureRotation.get(0));
+        List<Picture> pictureRotation2 = new ArrayList<Picture>();
+        pictureRotation2.add(pictureRotation.get(1));
+        List<Picture> pictureRotation3 = new ArrayList<Picture>();
+        pictureRotation3.add(pictureRotation.get(2));
+        List<Picture> pictureRotation4 = new ArrayList<Picture>();
+        pictureRotation4.add(pictureRotation.get(3));
+        List<Picture> pictureRotation5 = new ArrayList<Picture>();
+        pictureRotation5.add(pictureRotation.get(4));
+
+        picturePage.setBigSort("新冠肺炎");
+        List<Picture> xgfy = pictureService.findPicture(picturePage);
+
+        picturePage.setBigSort("异国动物");
+        List<Picture> ygdw = pictureService.findPicture(picturePage);
+
+        picturePage.setBigSort("旅行风景");
+        List<Picture> lxfj = pictureService.findPicture(picturePage);
+
+        picturePage.setBigSort("激情竞技");
+        List<Picture> jqjj = pictureService.findPicture(picturePage);
+
+        picturePage.setBigSort("图片专辑");
+        List<Picture> tpzj = pictureService.findPicture(picturePage);
+
+        picturePage.setBigSort("文字图片");
+        List<Picture> wztp = pictureService.findPicture(picturePage);
+
+        picturePage.setBigSort("首页底部");
+        List<Picture> sydb = pictureService.findPicture(picturePage);
+        List<Picture> sydb1 = new ArrayList<Picture>();
+        sydb1.add(sydb.get(0));
+        List<Picture> sydb2 = new ArrayList<Picture>();
+        sydb2.add(sydb.get(1));
+        List<Picture> sydb3 = new ArrayList<Picture>();
+        sydb3.add(sydb.get(2));
+        List<Picture> sydb4 = new ArrayList<Picture>();
+        sydb4.add(sydb.get(3));
+        List<Picture> sydb5 = new ArrayList<Picture>();
+        sydb5.add(sydb.get(4));
+        List<Picture> sydb6 = new ArrayList<Picture>();
+        sydb6.add(sydb.get(5));
+        List<Picture> sydb7 = new ArrayList<Picture>();
+        sydb7.add(sydb.get(6));
+        List<Picture> sydb8 = new ArrayList<Picture>();
+        sydb8.add(sydb.get(7));
+        List<Picture> sydb9 = new ArrayList<Picture>();
+        sydb9.add(sydb.get(8));
+        List<Picture> sydb10 = new ArrayList<Picture>();
+        sydb10.add(sydb.get(9));
+        List<Picture> sydb11 = new ArrayList<Picture>();
+        sydb11.add(sydb.get(10));
+        List<Picture> sydb12 = new ArrayList<Picture>();
+        sydb12.add(sydb.get(11));
+        List<Picture> sydb13 = new ArrayList<Picture>();
+        sydb13.add(sydb.get(12));
+
+        model.addAttribute("sydb1",sydb1);
+        model.addAttribute("sydb2",sydb2);
+        model.addAttribute("sydb3",sydb3);
+        model.addAttribute("sydb4",sydb4);
+        model.addAttribute("sydb5",sydb5);
+        model.addAttribute("sydb6",sydb6);
+        model.addAttribute("sydb7",sydb7);
+        model.addAttribute("sydb8",sydb8);
+        model.addAttribute("sydb9",sydb9);
+        model.addAttribute("sydb10",sydb10);
+        model.addAttribute("sydb11",sydb11);
+        model.addAttribute("sydb12",sydb12);
+        model.addAttribute("sydb13",sydb13);
+        model.addAttribute("tpzj",tpzj);
+        model.addAttribute("sydb",sydb);
+        model.addAttribute("wztp",wztp);
+        model.addAttribute("xgfy",xgfy);
+        model.addAttribute("ygdw",ygdw);
+        model.addAttribute("lxfj",lxfj);
+        model.addAttribute("jqjj",jqjj);
+        model.addAttribute("pictureRotation1",pictureRotation1);
+        model.addAttribute("pictureRotation2",pictureRotation2);
+        model.addAttribute("pictureRotation3",pictureRotation3);
+        model.addAttribute("pictureRotation4",pictureRotation4);
+        model.addAttribute("pictureRotation5",pictureRotation5);
+        return "main";
+    }
     @GetMapping("/category")
     @ApiOperation("跳转分类页面")
     public String SH(Model model, String lb){

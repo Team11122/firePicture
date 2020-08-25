@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -142,9 +145,18 @@ public class PersonalController {
 
     @GetMapping("/goOut")
     @ApiOperation("退出登录")
-    public String goOut(HttpSession session) {
+    public String goOut(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("退出登录执行了。。。。");
         session.removeAttribute("Account");
-        return "forward:/main/rotation";
+        // 保存cookie，实现自动登录
+        Cookie cookie_username = new Cookie("cookie_username", "");
+        cookie_username.setPath("/");
+        // 设置cookie的持久化时间，0
+        cookie_username.setMaxAge(0);
+        // 向客户端发送cookie
+        response.addCookie(cookie_username);
+        System.out.println("已经退出登录");
+        return "forward:/main/rotations";
     }
 
 //    @GetMapping("/goInformationC")

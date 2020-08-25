@@ -3,17 +3,27 @@ package com.pw.controller;
 import com.pw.pojo.Account;
 import com.pw.pojo.utils.VerificationAns;
 import com.pw.service.AccountService;
+import com.pw.utils.SendEmail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Api(value = "忘记密码接口层次", tags = "忘记密码接口")
 @Controller
@@ -22,6 +32,8 @@ import javax.servlet.http.HttpSession;
 public class ForgetPasswordController {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    JavaMailSenderImpl javaMailSender;
 
     @PostMapping("/queryProblemPassword")
     @ApiOperation("查询密保")
@@ -68,5 +80,45 @@ public class ForgetPasswordController {
         account.setPassword(newPassword);
         accountService.updateAccount(account);
         return "forget3";
+    }
+
+    @GetMapping("/verificationEmail")
+    public Boolean verificationEmail(String userName){
+        Account account1 = accountService.login(userName, null);
+        return account1.getEmail()!=null;
+    }
+
+    @GetMapping("/getCode")
+    public void getCode(String email, HttpSession session) {
+        String code = SendEmail.achieveCode();
+        session.setAttribute("code", code);
+        //TimerTask实现2分钟后从session中删除checkCode
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+               session.removeAttribute("code");
+                System.out.println("code删除成功");
+                timer.cancel();
+            }
+        }, 2 * 60 * 1000);
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setSubject("火图网提醒您：您的验证码如下，二分钟内有效");
+        simpleMailMessage.setText(code);
+        simpleMailMessage.setTo(email);
+        simpleMailMessage.setFrom("2117940371@qq.com");
+        javaMailSender.send(simpleMailMessage);
+    }
+    @GetMapping("verificationCode")
+    public String verificationCode(HttpSession session,String code){
+        String s=(String)session.getAttribute("code");
+        if(s!=null){
+            if(s.equals(code)){
+                return "true";
+            }
+           return "false";
+        }else {
+            return "验证码格式不对！";
+        }
     }
 }

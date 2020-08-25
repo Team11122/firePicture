@@ -20,4 +20,6 @@ public class PersonUpdate {
     private String bigPosition;
     @ApiModelProperty("用户居住小地点")
     private String smallPosition;
+    @ApiModelProperty("用户邮箱")
+    private String email;
 }

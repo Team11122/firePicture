@@ -115,6 +115,15 @@ public class AliPayServiceImpl implements AliPayService {
             Account account = new Account();
             account.setIsVip(1);
             accountMap.updateAccount(account);
+            final Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    account.setIsVip(0);
+                    accountMap.updateAccount(account);
+                    timer.cancel();
+                }
+            }, 30 * 24 * 60 * 60 * 1000);
             session.setAttribute("Account", accountService.findAccount(((Account)session.getAttribute("Account")).getId()));
             return "redirect:/main/rotation";
 //            return "trade_no:"+trade_no+"<br/>out_trade_no:"+out_trade_no+"<br/>total_amount:"+total_amount;

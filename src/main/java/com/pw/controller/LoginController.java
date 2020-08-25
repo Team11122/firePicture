@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Api(value = "登录接口层次", tags = "登录接口")
@@ -45,8 +48,8 @@ public class LoginController {
     @PostMapping("/login")
     @ApiOperation(value = "登录",
             httpMethod = "POST", response = Account.class)
-    public String login(String userName,String password, Model model, HttpSession session) {
-        if (userName.equals("admin") && password.equals("admin")) {
+    public String login(String userName, String password, Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        if ("admin".equals(userName) && "admin".equals(password)) {
             session.setAttribute("Admin","1");
             model.addAttribute("accountNoVip", accountService.findFistPage());
             model.addAttribute("max", accountService.findMaxPage());
@@ -57,6 +60,14 @@ public class LoginController {
         Account account2 = accountService.login(userName, password);
         if (account2 != null) {
             session.setAttribute("Account", account2);
+            // 保存cookie，实现自动登录
+            Cookie cookie_username = new Cookie("cookie_username", account2.getUserName());
+            // 设置cookie的持久化时间，30天
+            cookie_username.setMaxAge(30 * 24 * 60 * 60);
+            // 设置为当前项目下都携带这个cookie
+            cookie_username.setPath("/");
+            // 向客户端发送cookie
+            response.addCookie(cookie_username);
             model.addAttribute("account", account2);
             return "forward:/main/rotation";
         } else {

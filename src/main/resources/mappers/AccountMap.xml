@@ -31,6 +31,7 @@
             <if test="bigPosition!=null">bigPosition=#{bigPosition},</if>
             <if test="smallPosition!=null">smallPosition=#{smallPosition},</if>
             <if test="background!=null">background=#{background},</if>
+            <if test="email!=null">email=#{email},</if>
         </set>
         where id = #{id}
     </update>
@@ -39,7 +40,7 @@
         from pictures_web.account
         <where>
             <if test="userName!=null">userName = #{userName}</if>
-            <if test="password!=null">AND password like #{password}</if>
+            <if test="password!=null">AND password = #{password}</if>
         </where>
     </select>
     <select id="findAllAccount" resultType="account" parameterType="map">
